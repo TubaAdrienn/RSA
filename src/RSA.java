@@ -3,8 +3,6 @@ import java.security.SecureRandom;
 
 public class RSA {
 
-    private final static BigInteger one= new BigInteger("1");
-    private final static SecureRandom random=new SecureRandom();
 
     private BigInteger p;
     private BigInteger q;
@@ -12,47 +10,39 @@ public class RSA {
     private BigInteger e;
     private BigInteger d;
     private BigInteger mod;
+    private final BigInteger one= new BigInteger("1");
+    private final SecureRandom random=new SecureRandom();
+
 
     public RSA(){
 
+        this.p = BigInteger.probablePrime(25, random);
+        this.q = BigInteger.probablePrime(25, random);
+        this.fi = (p.subtract(one).multiply(q.subtract(one)));
+        this.mod = p.multiply(q);
         do {
-            this.p = BigInteger.probablePrime(25, random);
-            this.q = BigInteger.probablePrime(25, random);
-            this.fi = (p.subtract(one).multiply(q.subtract(one)));
-            this.mod = p.multiply(q);
-            this.e = new BigInteger("67335");
+            this.e = new BigInteger(String.valueOf(Math.abs(random.nextInt())));
             try {
                 this.d = e.modInverse(fi);
             } catch (ArithmeticException e){
-                System.out.println("Rossz modulus. Új generálása.");
+                System.out.println("Rossz e. Új generálása.");
             }
         } while(this.d==null);
+        System.out.println("A nyilvános e: "+e);
+        System.out.println("A titkos d: "+d);
 
     }
 
-    public BigInteger titkosit(BigInteger üzenet){
-        return üzenet.modPow(e,mod);
+    public BigInteger getE(){
+        return e;
     }
 
-    public BigInteger visszafejt(BigInteger titkosÜzenet){
-        return titkosÜzenet.modPow(d, mod);
+    public BigInteger getMod(){
+        return mod;
     }
 
-    public static void main(String[] args) {
-        RSA rsa=new RSA();
-
-        for(int i=0; i<10; i++) {
-
-            BigInteger üzenet = new BigInteger(25, random);
-            BigInteger titkosÜzenet = rsa.titkosit(üzenet);
-            BigInteger visszaFejtett = rsa.visszafejt(titkosÜzenet);
-
-            System.out.println("Üzenet: " + üzenet);
-            System.out.println("Titkositott: " + titkosÜzenet);
-            System.out.println("Visszafejtett: " + visszaFejtett);
-
-            System.out.println("-------------------------------------------------");
-        }
+    public void visszafejt(BigInteger titkosÜzenet){
+        System.out.println("Visszafejtett: " + titkosÜzenet.modPow(d, mod));
     }
 
 }
