@@ -12,19 +12,14 @@ public class Main {
 
         SecureRandom random=new SecureRandom();
         RSA rsa=new RSA();
-
-        BigInteger üzenet;
-        BigInteger titkosÜzenet;
-
-        BigInteger e=rsa.getE();
-        BigInteger mod=rsa.getMod();
-
+        BigInteger üzenet, titkosÜzenet;
+        Key publicKey=rsa.getPublicKey();
 
 
         for(int i=0; i<10; i++) {
 
-            üzenet = new BigInteger(25, random);
-            titkosÜzenet = titkosit(üzenet, e, mod);
+            üzenet = new BigInteger(50, random);
+            titkosÜzenet = titkosit(üzenet, publicKey.getExp(), publicKey.getMod());
             System.out.println("Üzenet: " + üzenet);
             System.out.println("Titkositott: " + titkosÜzenet);
             rsa.visszafejt(titkosÜzenet);
